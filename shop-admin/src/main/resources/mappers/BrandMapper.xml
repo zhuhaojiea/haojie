@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+    "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fh.shop.admin.mapper.brand.IBrandMapper">
+
+
+	<select id="findAllBrandList" resultType="com.fh.shop.admin.po.brand.Brand">
+		select id,brandName from t_brand
+	</select>
+	
+	<insert id="addBrand" parameterType="com.fh.shop.admin.po.brand.Brand">
+		<selectKey keyProperty="id" resultType="long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into t_brand (brandName) values (#{brandName})
+	</insert>
+	
+	<select id="findBrandIdByName" parameterType="string" resultType="long">
+		select id from t_brand where brandName = #{v}
+	</select>
+
+</mapper>

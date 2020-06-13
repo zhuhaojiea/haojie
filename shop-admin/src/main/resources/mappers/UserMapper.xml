@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+    "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fh.shop.admin.mapper.user.IUserMapper">
+
+
+	<select id="findUserByUserName" parameterType="string" resultType="com.fh.shop.admin.po.user.User">
+		select id,username,realName,password,loginTime,loginCount from t_user where username=#{v}
+	</select>
+	
+	<insert id="addUser" parameterType="com.fh.shop.admin.po.user.User">
+		insert into t_user (userName,realName,password,shengId,shiId,xianId) values
+		(#{userName},#{realName},#{password},#{shengId},#{shiId},#{xianId})
+	</insert>
+	
+	
+	<update id="updateLoginTime">
+		update t_user set loginTime=#{currTime} where id=#{userId}
+	</update>
+	
+	
+	<update id="updateLoginCount" parameterType="long">
+		update t_user set logincount=1 where id=#{v}
+	</update>
+
+	<update id="incrLoginCount" parameterType="long">
+		update t_user set logincount=logincount+1 where id=#{v}
+	</update>
+
+
+
+
+
+	<sql id="userWhere">
+		<where>
+			<if test="shengId != null and shengId > 0">
+				shengId = #{shengId}
+			</if>
+			<if test="shiId != null and shiId > 0">
+				and shiId = #{shiId}
+			</if>
+			<if test="xianId != null and xianId > 0">
+				and xianId = #{xianId}
+			</if>
+			<if test="userName != null and userName != ''">
+				and userName like concat('%',#{userName},'%')
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findUserCount" parameterType="com.fh.shop.admin.param.user.UserSearchParam" resultType="long">
+		select count(*) from t_user
+		<include refid="userWhere"></include>
+	</select>
+	
+	<select id="findUserPageList" parameterType="com.fh.shop.admin.param.user.UserSearchParam" resultType="com.fh.shop.admin.po.user.User">
+		select t.* from (
+		select u.id,username,a1.areaName "shengName",a2.areaName "shiName",a3.areaName "xianName" from t_user u
+		left join t_area a1 on u.shengid=a1.id
+		left join t_area a2 on u.shiid=a2.id
+		left join t_area a3 on u.xianid=a3.id
+		<include refid="userWhere"></include>
+		order by u.id desc
+) t
+		limit #{start},#{length}
+	</select>
+	
+	<select id="findAllUserList" parameterType="com.fh.shop.admin.param.user.UserSearchParam" resultType="com.fh.shop.admin.po.user.User">
+		select u.id,username,a1.areaName "shengName",a2.areaName "shiName",a3.areaName "xianName" from t_user u
+		left join t_area a1 on u.shengid=a1.id
+		left join t_area a2 on u.shiid=a2.id
+		left join t_area a3 on u.xianid=a3.id
+		<include refid="userWhere"></include>
+		order by u.id desc
+	</select>
+
+
+	<select id="findUser" parameterType="long" resultType="com.fh.shop.admin.po.user.User">
+		select u.id,username,shengId,shiId,xianId,a1.areaName "shengName",a2.areaName "shiName",a3.areaName "xianName" from t_user u
+		left join t_area a1 on u.shengid=a1.id
+		left join t_area a2 on u.shiid=a2.id
+		left join t_area a3 on u.xianid=a3.id
+		where u.id=#{v}
+	</select>
+	
+	<update id="updateUser" parameterType="com.fh.shop.admin.po.user.User">
+		update t_user set userName=#{userName},shengId=#{shengId},shiId=#{shiId},xianId=#{xianId}
+		where id = #{id}
+	</update>
+
+
+</mapper>

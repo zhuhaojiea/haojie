@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+    "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fh.shop.admin.mapper.spec.ISpecMapper">
+
+
+<select id="findListCount" parameterType="com.fh.shop.admin.param.spec.SpecSearchParam" resultType="long">
+	select count(*) from t_spec
+</select>
+	
+	<select id="findPageList" parameterType="com.fh.shop.admin.param.spec.SpecSearchParam" resultType="com.fh.shop.admin.po.spec.Spec">
+		select t.* from (select id,specName,sort from t_spec
+		order by sort) t
+		limit #{start},#{length}
+	</select>
+
+</mapper>
